@@ -15,231 +15,122 @@
   <link rel="apple-touch-icon" href="./icon-192.png">
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #0D281E;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    }
-
-    /* Layar Pembuka (Splash Screen) Hijau Tua */
-    #splash-screen {
-      position: fixed;
-      inset: 0;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
       background: linear-gradient(145deg, #0B2219 0%, #1B4332 60%, #2D6A4F 100%);
       color: #FFFFFF;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.35s ease, visibility 0.35s ease;
+      padding: 20px;
       text-align: center;
-      padding: 24px;
     }
-    #splash-screen.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
+    .launcher-card {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(216, 243, 220, 0.28);
+      border-radius: 24px;
+      padding: 30px 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
     }
-    .splash-logo {
+    .app-logo {
       width: 84px;
       height: 84px;
       border-radius: 22px;
-      background: rgba(255, 255, 255, 0.14);
-      border: 2px solid rgba(216, 243, 220, 0.45);
-      padding: 8px;
-      margin-bottom: 16px;
+      background: #FFFFFF;
+      padding: 6px;
+      margin: 0 auto 16px;
+      display: block;
       object-fit: contain;
     }
-    .splash-title {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: 0.3px;
-    }
-    .splash-sub {
-      font-size: 13px;
-      color: #D8F3DC;
-      margin-top: 4px;
-    }
-    .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid rgba(255, 255, 255, 0.25);
-      border-top-color: #D8F3DC;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-top: 24px;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Frame Utama Aplikasi SIMCipasung */
-    #sim-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
+    h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .subtitle { font-size: 13.5px; color: #D8F3DC; margin-bottom: 24px; line-height: 1.45; }
+    .btn {
       display: block;
-      background: #F3F7F4;
-    }
-
-    /* Banner Instalasi Android di Bagian Bawah */
-    #install-banner {
-      position: fixed;
-      left: 12px;
-      right: 12px;
-      bottom: 14px;
-      max-width: 460px;
-      margin: 0 auto;
-      background: #0D281E;
-      color: #FFFFFF;
-      border: 1px solid #40916C;
-      border-radius: 16px;
-      padding: 12px 14px;
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
-      z-index: 9998;
-    }
-    .install-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .install-info img {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      background: #FFFFFF;
-      padding: 2px;
-    }
-    .install-title {
-      font-size: 13.5px;
+      width: 100%;
+      padding: 13px 18px;
+      border-radius: 12px;
+      font-size: 15px;
       font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: transform 0.15s ease;
     }
-    .install-desc {
-      font-size: 11.5px;
-      color: #B7E4C7;
-    }
-    .install-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
+    .btn:active { transform: scale(0.98); }
+    .btn-open {
+      background: #FFFFFF;
+      color: #1B4332;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
     }
     .btn-install {
       background: #40916C;
       color: #FFFFFF;
-      border: none;
-      border-radius: 10px;
-      padding: 8px 13px;
-      font-size: 12.5px;
-      font-weight: 700;
-      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: none;
     }
-    .btn-close-install {
-      background: transparent;
+    .hint-box {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+      font-size: 12px;
       color: #B7E4C7;
-      border: none;
-      font-size: 18px;
-      padding: 4px 6px;
-      cursor: pointer;
+      line-height: 1.5;
     }
   </style>
 </head>
 <body>
 
-  <!-- Splash Screen -->
-  <div id="splash-screen">
-    <img src="./icon-192.png" alt="Logo SIMCipasung" class="splash-logo" onerror="this.style.display='none'">
-    <div class="splash-title">SIMCipasung</div>
-    <div class="splash-sub">Sistem Informasi Manajemen MTs Cipasung</div>
-    <div class="spinner"></div>
-  </div>
+  <div class="launcher-card">
+    <img src="./icon-192.png" alt="Logo SIMCipasung" class="app-logo" onerror="this.style.display='none'">
+    <h1>SIMCipasung</h1>
+    <div class="subtitle">Sistem Informasi Manajemen<br>Madrasah Tsanawiyah Cipasung</div>
 
-  <!-- Iframe Penuh dengan Izin GPS Geolocation -->
-  <iframe
-    id="sim-frame"
-    title="SIMCipasung MTs Cipasung"
-    allow="geolocation *; camera *; microphone *; clipboard-write *"
-    allowfullscreen>
-  </iframe>
+    <a id="btn-open-app" href="https://script.google.com/macros/s/AKfycbwDPcuUMttnoHoS3vp8WWp0r4sXqoFGQ4KCJHvsg7dMvL-a9AI6GBJIqlExpx-B2FzC/exec" class="btn btn-open">
+      Masuk ke Aplikasi SIMCipasung
+    </a>
 
-  <!-- Banner Ajakan Instal Aplikasi Android -->
-  <div id="install-banner">
-    <div class="install-info">
-      <img src="./icon-192.png" alt="Ikon" onerror="this.style.display='none'">
-      <div>
-        <div class="install-title">Pasang SIMCipasung</div>
-        <div class="install-desc">Akses cepat dari layar utama HP Anda</div>
-      </div>
-    </div>
-    <div class="install-actions">
-      <button type="button" class="btn-install" id="btn-trigger-install">Instal</button>
-      <button type="button" class="btn-close-install" id="btn-dismiss-install" aria-label="Tutup">&times;</button>
+    <button type="button" id="btn-install-pwa" class="btn btn-install">
+      + Instal ke Layar Utama HP
+    </button>
+
+    <div class="hint-box" id="status-hint">
+      Untuk memasang ikon di HP Android: ketuk menu <strong>&#8942;</strong> di pojok kanan atas Chrome, lalu pilih <strong>Tambahkan ke layar utama / Instal aplikasi</strong>.
     </div>
   </div>
 
   <script>
-    // =========================================================================
-    // TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT ANDA (/exec) DI BAWAH INI:
-    // =========================================================================
     const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwDPcuUMttnoHoS3vp8WWp0r4sXqoFGQ4KCJHvsg7dMvL-a9AI6GBJIqlExpx-B2FzC/exec';
 
-    const frame = document.getElementById('sim-frame');
-    const splash = document.getElementById('splash-screen');
-
-    if (GAS_WEB_APP_URL && GAS_WEB_APP_URL.indexOf('http') === 0) {
-      frame.src = GAS_WEB_APP_URL;
-    } else {
-      splash.innerHTML =
-        '<div style="max-width:360px;">' +
-          '<h3 style="margin-bottom:8px;">Konfigurasi URL Diperlukan</h3>' +
-          '<p style="font-size:13px; color:#D8F3DC; line-height:1.5;">' +
-            'Buka file <code>index.html</code> dan isi variabel <code>GAS_WEB_APP_URL</code> dengan URL deployment Web App SIMCipasung yang berakhiran <code>/exec</code>.' +
-          '</p>' +
-        '</div>';
-    }
-
-    frame.addEventListener('load', function() {
-      setTimeout(function() {
-        splash.classList.add('hidden');
-      }, 450);
-    });
-
-    // Cadangan tutup splash jika jaringan lambat (maksimal 5 detik)
-    setTimeout(function() {
-      splash.classList.add('hidden');
-    }, 5000);
-
-    // Registrasi Service Worker PWA
+    // Daftarkan Service Worker agar memenuhi syarat PWA Android
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js').catch(function(err) {
-          console.warn('Registrasi SW:', err);
-        });
+        navigator.serviceWorker.register('./sw.js').catch(function() {});
       });
     }
 
-    // Tangkap event instalasi PWA Android (beforeinstallprompt)
+    // Jika dibuka dari ikon layar utama (mode aplikasi standalone), langsung buka SIMCipasung
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (isStandalone) {
+      document.getElementById('status-hint').textContent = 'Membuka SIMCipasung...';
+      setTimeout(function() {
+        window.location.replace(GAS_WEB_APP_URL);
+      }, 400);
+    }
+
+    // Tampilkan tombol Instal otomatis jika Chrome mendukung prompt langsung
     let deferredPrompt = null;
-    const installBanner = document.getElementById('install-banner');
-    const btnInstall = document.getElementById('btn-trigger-install');
-    const btnDismiss = document.getElementById('btn-dismiss-install');
+    const btnInstall = document.getElementById('btn-install-pwa');
 
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       deferredPrompt = e;
-      installBanner.style.display = 'flex';
+      btnInstall.style.display = 'block';
     });
 
     btnInstall.addEventListener('click', async function() {
@@ -247,17 +138,8 @@
       deferredPrompt.prompt();
       const choice = await deferredPrompt.userChoice;
       if (choice.outcome === 'accepted') {
-        installBanner.style.display = 'none';
+        btnInstall.style.display = 'none';
       }
-      deferredPrompt = null;
-    });
-
-    btnDismiss.addEventListener('click', function() {
-      installBanner.style.display = 'none';
-    });
-
-    window.addEventListener('appinstalled', function() {
-      installBanner.style.display = 'none';
       deferredPrompt = null;
     });
   </script>
