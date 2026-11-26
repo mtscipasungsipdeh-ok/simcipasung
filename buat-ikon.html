@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Generator Ikon Aplikasi SIMCipasung</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #F3F7F4; padding: 30px; text-align: center; color: #1E293B; }
+    .card { max-width: 480px; margin: 0 auto; background: #FFF; padding: 24px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    canvas { border-radius: 24px; border: 1px solid #CBD5E1; margin: 16px 0; }
+    button, input { margin: 6px; padding: 10px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    button { background: #1B4332; color: #FFF; border: none; }
+    button:hover { background: #2D6A4F; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Generator Ikon SIMCipasung</h2>
+    <p style="font-size:13px; color:#64748B;">Unggah logo MTs Cipasung (opsional) atau langsung unduh ikon bawaan hijau tua.</p>
+    <input type="file" id="logoInput" accept="image/*"><br>
+    <canvas id="previewCanvas" width="192" height="192"></canvas><br>
+    <button onclick="downloadIcon(192)">Unduh icon-192.png</button>
+    <button onclick="downloadIcon(512)">Unduh icon-512.png</button>
+  </div>
+
+  <script>
+    let customImg = null;
+    const preview = document.getElementById('previewCanvas');
+
+    document.getElementById('logoInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const img = new Image();
+        img.onload = function() {
+          customImg = img;
+          drawIcon(preview, 192);
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function drawIcon(canvas, size) {
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      // Latar belakang gradasi hijau tua SIMCipasung
+      const grad = ctx.createLinearGradient(0, 0, size, size);
+      grad.addColorStop(0, '#0D281E');
+      grad.addColorStop(1, '#1B4332');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, size, size);
+
+      // Bingkai aksen lembut
+      ctx.strokeStyle = 'rgba(216, 243, 220, 0.35)';
+      ctx.lineWidth = size * 0.03;
+      ctx.strokeRect(size * 0.06, size * 0.06, size * 0.88, size * 0.88);
+
+      if (customImg) {
+        const pad = size * 0.16;
+        const maxDim = size - pad * 2;
+        const scale = Math.min(maxDim / customImg.width, maxDim / customImg.height);
+        const w = customImg.width * scale;
+        const h = customImg.height * scale;
+        ctx.drawImage(customImg, (size - w) / 2, (size - h) / 2, w, h);
+      } else {
+        ctx.fillStyle = '#D8F3DC';
+        ctx.font = 'bold ' + Math.round(size * 0.24) + 'px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('SIM', size / 2, size * 0.43);
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '600 ' + Math.round(size * 0.11) + 'px system-ui, sans-serif';
+        ctx.fillText('CIPASUNG', size / 2, size * 0.64);
+      }
+    }
+
+    function downloadIcon(size) {
+      const c = document.createElement('canvas');
+      drawIcon(c, size);
+      const a = document.createElement('a');
+      a.download = 'icon-' + size + '.png';
+      a.href = c.toDataURL('image/png');
+      a.click();
+    }
+
+    drawIcon(preview, 192);
+  </script>
+</body>
+</html>
