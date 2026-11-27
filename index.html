@@ -24,64 +24,84 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 18px;
       text-align: center;
     }
     .launcher-card {
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(216, 243, 220, 0.28);
       border-radius: 24px;
-      padding: 30px 24px;
+      padding: 26px 22px;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
     }
     .app-logo {
-      width: 84px;
-      height: 84px;
-      border-radius: 22px;
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
       background: #FFFFFF;
       padding: 6px;
-      margin: 0 auto 16px;
+      margin: 0 auto 14px;
       display: block;
       object-fit: contain;
     }
-    h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
-    .subtitle { font-size: 13.5px; color: #D8F3DC; margin-bottom: 24px; line-height: 1.45; }
+    h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #D8F3DC; margin-bottom: 18px; line-height: 1.4; }
+    .warning-webview {
+      background: #FEF2F2;
+      color: #991B1B;
+      border: 2px solid #FCA5A5;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: left;
+      display: none;
+    }
     .btn {
       display: block;
       width: 100%;
-      padding: 13px 18px;
+      padding: 13px 16px;
       border-radius: 12px;
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 700;
       text-decoration: none;
       border: none;
       cursor: pointer;
-      margin-bottom: 12px;
-      transition: transform 0.15s ease;
+      margin-bottom: 10px;
     }
-    .btn:active { transform: scale(0.98); }
+    .btn-install {
+      background: #F59E0B;
+      color: #1E293B;
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.35);
+      display: none;
+    }
     .btn-open {
       background: #FFFFFF;
       color: #1B4332;
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
     }
-    .btn-install {
-      background: #40916C;
+    .btn-alt {
+      background: rgba(255, 255, 255, 0.14);
       color: #FFFFFF;
       border: 1px solid rgba(255, 255, 255, 0.3);
-      display: none;
+      font-size: 13px;
+      font-weight: 600;
     }
-    .hint-box {
+    .steps-box {
       margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.22);
       font-size: 12px;
-      color: #B7E4C7;
-      line-height: 1.5;
+      color: #D8F3DC;
+      line-height: 1.55;
+      text-align: left;
     }
+    .steps-box strong { color: #FFFFFF; }
   </style>
 </head>
 <body>
@@ -91,39 +111,58 @@
     <h1>SIMCipasung</h1>
     <div class="subtitle">Sistem Informasi Manajemen<br>Madrasah Tsanawiyah Cipasung</div>
 
-    <a id="btn-open-app" href="https://script.google.com/macros/u/0/s/AKfycbwDPcuUMttnoHoS3vp8WWp0r4sXqoFGQ4KCJHvsg7dMvL-a9AI6GBJIqlExpx-B2FzC/exec" class="btn btn-open">
-      Masuk ke Aplikasi SIMCipasung
-    </a>
+    <!-- Peringatan Otomatis Jika Dibuka dari Dalam WhatsApp / Browser Bawaan HP -->
+    <div id="webview-alert" class="warning-webview">
+      <strong>Perhatian:</strong> Anda membuka tautan ini dari dalam aplikasi WhatsApp atau browser bawaan HP sehingga tombol instalasi tidak muncul.<br><br>
+      <strong>Cara Mengatasi:</strong> Ketuk ikon <strong>titik tiga &#8942;</strong> di pojok kanan atas layar, lalu pilih <strong>Buka di Chrome</strong>.
+    </div>
 
+    <!-- Tombol Instalasi Otomatis PWA -->
     <button type="button" id="btn-install-pwa" class="btn btn-install">
-      + Instal ke Layar Utama HP
+      &#11015; Instal Aplikasi SIMCipasung di HP
     </button>
 
-    <div class="hint-box" id="status-hint">
-      Untuk memasang ikon di HP Android: ketuk menu <strong>&#8942;</strong> di pojok kanan atas Chrome, lalu pilih <strong>Tambahkan ke layar utama / Instal aplikasi</strong>.
+    <!-- Tombol Masuk Utama -->
+    <a href="https://script.google.com/macros/s/AKfycbwDPcuUMttnoHoS3vp8WWp0r4sXqoFGQ4KCJHvsg7dMvL-a9AI6GBJIqlExpx-B2FzC/exec" class="btn btn-open">
+      Masuk ke SIMCipasung
+    </a>
+
+    <!-- Tombol Cadangan Jika HP Memiliki Banyak Akun Google -->
+    <a href="https://script.google.com/macros/u/0/s/AKfycbwDPcuUMttnoHoS3vp8WWp0r4sXqoFGQ4KCJHvsg7dMvL-a9AI6GBJIqlExpx-B2FzC/exec" class="btn btn-alt">
+      Masuk Alternatif (Jika Gagal Dibuka)
+    </a>
+
+    <div class="steps-box" id="manual-guide">
+      <strong>Cara Memasang Ikon di Layar Utama:</strong><br>
+      1. Pastikan halaman ini dibuka menggunakan <strong>Google Chrome</strong>.<br>
+      2. Ketuk ikon <strong>titik tiga &#8942;</strong> di kanan atas Chrome.<br>
+      3. Pilih <strong>Tambahkan ke layar utama</strong> lalu ketuk <strong>Instal</strong>.
     </div>
   </div>
 
   <script>
-    const GAS_WEB_APP_URL = 'https://script.google.com/macros/u/0/s/AKfycbwDPcuUMttnoHoS3vp8WWp0r4sXqoFGQ4KCJHvsg7dMvL-a9AI6GBJIqlExpx-B2FzC/exec';
+    const PRIMARY_URL = 'https://script.google.com/macros/s/AKfycbwDPcuUMttnoHoS3vp8WWp0r4sXqoFGQ4KCJHvsg7dMvL-a9AI6GBJIqlExpx-B2FzC/exec';
 
-    // Daftarkan Service Worker agar memenuhi syarat PWA Android
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('./sw.js').catch(function() {});
       });
     }
 
-    // Jika dibuka dari ikon layar utama (mode aplikasi standalone), langsung buka SIMCipasung
+    // Jika sudah terinstal dan dibuka dari ikon layar utama, langsung masuk ke aplikasi
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     if (isStandalone) {
-      document.getElementById('status-hint').textContent = 'Membuka SIMCipasung...';
-      setTimeout(function() {
-        window.location.replace(GAS_WEB_APP_URL);
-      }, 400);
+      window.location.replace(PRIMARY_URL);
     }
 
-    // Tampilkan tombol Instal otomatis jika Chrome mendukung prompt langsung
+    // Deteksi browser dalam aplikasi WhatsApp / Facebook / Instagram / WebView
+    const ua = navigator.userAgent || '';
+    const isInAppWebView = /FBAN|FBAV|Instagram|WhatsApp|wv\)/i.test(ua);
+    if (isInAppWebView) {
+      document.getElementById('webview-alert').style.display = 'block';
+    }
+
+    // Tangkap tombol instalasi otomatis Chrome
     let deferredPrompt = null;
     const btnInstall = document.getElementById('btn-install-pwa');
 
